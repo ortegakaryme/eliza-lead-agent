@@ -138,8 +138,6 @@ lead-agent/
 │   ├── setup_notion_db.py    # Creates the Notion database
 │   └── send_test_leads.py    # Sends a Hot, a Warm and a Cold sample lead
 ├── tests/                    # Scoring, follow-up and endpoint tests (Notion mocked)
-├── api/index.py              # Vercel entry point
-├── vercel.json               # Vercel routing
 ├── render.yaml               # Render blueprint (alternative host)
 ├── requirements.txt
 └── .env.example
@@ -179,10 +177,10 @@ Three pages appear in Notion: one Hot, one Warm, one Cold. The script also sends
 
 ### 4. Deploy to Vercel
 
-The app runs as a Python serverless function: `api/index.py` exposes the FastAPI app, and `vercel.json` rewrites every path to it. A rewrite hands the app `/api/index` as the path, so the original path travels in a `__path` query parameter and a small middleware restores it before routing. Serverless instances start in about a second, so no keep-alive pinger is needed.
+Vercel detects FastAPI automatically and serves the `app` object in `app/main.py` as a serverless function, with every path routed to it. No `vercel.json` is needed; adding a rewrite would actually break routing, because the app would then see the rewrite's destination as the path. Serverless instances start in about a second, so no keep-alive pinger is needed.
 
 1. Push `lead-agent/` to a GitHub repository (`.env` is ignored by git).
-2. In Vercel: **Add New → Project**, import the repository. Framework preset: **Other**. Leave build settings empty.
+2. In Vercel: **Add New → Project**, import the repository. Framework preset: **FastAPI** (auto-detected) or **Other**. Leave build settings empty.
 3. Under **Environment Variables**, add `NOTION_API_KEY`, `NOTION_DATABASE_ID` and `WEBHOOK_SECRET`, then **Deploy**.
 4. Open `https://<your-project>.vercel.app/health` → `{"status":"ok"}`.
 5. Test the deployed endpoint: `python scripts/send_test_leads.py https://<your-project>.vercel.app`
