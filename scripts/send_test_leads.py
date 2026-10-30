@@ -1,4 +1,4 @@
-"""Send three sample leads (Hot, Warm, Cold) to the /leads endpoint, plus one
+"""Send six sample leads (two each of Hot, Warm, Cold) to the /leads endpoint, plus one
 request with a wrong secret to show that authentication works.
 
 Usage:
@@ -6,7 +6,7 @@ Usage:
     python scripts/send_test_leads.py https://your-service.onrender.com # deployed
 
 Reads WEBHOOK_SECRET from .env. The conversation IDs are fixed, so running the
-script twice updates the same three Notion pages instead of creating duplicates.
+script twice updates the same six Notion pages instead of creating duplicates.
 """
 import os
 import sys
@@ -59,6 +59,54 @@ SAMPLE_LEADS = {
         "decision_role": "researching_for_other",
         "notes": "Investiga opciones para un familiar médico; aún sin presupuesto definido.",
         "conversation_id": "test-cold-001",
+    },
+    "Hot by phone (caller ID only, immediate purchase, max budget only)": {
+        "full_name": "Fernando Castañeda Rivas",
+        "company": "Grupo Castañeda Agro",
+        "business_type": "other",
+        "property_type": "land",
+        "operation": "purchase",
+        "space_m2": 5000,
+        "zone": "Zinacantepec, sobre carretera a Valle de Bravo",
+        "budget_max_mxn": 8500000,
+        "timeframe": "immediate",
+        "decision_role": "decision_maker",
+        "notes": "Quiere cerrar compra este mes; pagaría de contado. Solo dio el número desde el que llamó.",
+        "conversation_id": "test-hot-002",
+        "caller_id": "+527225551234",
+    },
+    "Warm (influencer, spoken email with spaces, budget given backwards)": {
+        "full_name": "Luis Pérez Mondragón",
+        "phone": "722 555 8890",
+        "email": "Luis . Perez @ Gmail .com",
+        "company": "Óptica Visión Clara",
+        "business_type": "retail_store",
+        "property_type": "retail_unit",
+        "operation": "lease",
+        "space_m2": 60,
+        "zone": "Plaza o corredor comercial en Toluca centro",
+        "budget_min_mxn": 30000,
+        "budget_max_mxn": 18000,
+        "timeframe": "1_3_months",
+        "decision_role": "influencer",
+        "notes": "Es gerente de sucursal; la dueña aprueba el contrato.",
+        "conversation_id": "test-warm-002",
+    },
+    "Cold (decision maker, budget said as 0, unparseable email, 6+ months)": {
+        "full_name": "Jorge Hernández Lara",
+        "phone": "7221112233",
+        "email": "jorge arroba hotmail",
+        "company": "Despacho Hernández Lara",
+        "business_type": "office",
+        "property_type": "office",
+        "operation": "lease",
+        "space_m2": 90,
+        "zone": "Metepec",
+        "budget_min_mxn": 0,
+        "timeframe": "6_plus_months",
+        "decision_role": "decision_maker",
+        "notes": "Su contrato actual vence el próximo año; solo está explorando precios.",
+        "conversation_id": "test-cold-002",
     },
 }
 
