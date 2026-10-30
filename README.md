@@ -179,7 +179,7 @@ Three pages appear in Notion: one Hot, one Warm, one Cold. The script also sends
 
 ### 4. Deploy to Vercel
 
-The app runs as a Python serverless function: `api/index.py` exposes the FastAPI app and `vercel.json` routes every path to it. Serverless instances start in about a second, so no keep-alive pinger is needed.
+The app runs as a Python serverless function: `api/index.py` exposes the FastAPI app and `vercel.json` sends every path to it unchanged (a `routes` entry rather than a `rewrite`, which would hand the app `/api/index` for every request). Serverless instances start in about a second, so no keep-alive pinger is needed.
 
 1. Push `lead-agent/` to a GitHub repository (`.env` is ignored by git).
 2. In Vercel: **Add New → Project**, import the repository. Framework preset: **Other**. Leave build settings empty.
