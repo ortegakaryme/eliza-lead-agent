@@ -136,7 +136,7 @@ lead-agent/
 │   └── save_lead_tool.json   # ElevenLabs server tool definition
 ├── scripts/
 │   ├── setup_notion_db.py    # Creates the Notion database
-│   └── send_test_leads.py    # Sends a Hot, a Warm and a Cold sample lead
+│   └── send_test_leads.py    # Sends six sample leads (2 Hot, 2 Warm, 2 Cold)
 ├── tests/                    # Scoring, follow-up and endpoint tests (Notion mocked)
 ├── render.yaml               # Render blueprint (alternative host)
 ├── requirements.txt
