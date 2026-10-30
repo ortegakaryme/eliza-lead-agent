@@ -18,6 +18,7 @@ from typing import Optional
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 
 from .config import get_settings
 from .followup import compute_follow_up
@@ -25,13 +26,23 @@ from .models import LeadIn, LeadOut
 from .notion import NotionClient, NotionError
 from .scoring import score_lead
 
-settings = get_settings()
+# A missing or invalid environment variable must not crash the process silently:
+# on serverless hosts that only shows up as an opaque 500. Instead the app starts,
+# /health names the broken variables (never their values) and /leads returns 503.
+try:
+    settings = get_settings()
+    CONFIG_PROBLEMS = []
+except ValidationError as exc:
+    settings = None
+    CONFIG_PROBLEMS = [f"{str(e['loc'][0]).upper()}: {e['msg']}" for e in exc.errors()]
 
 logging.basicConfig(
-    level=settings.log_level.upper(),
+    level=settings.log_level.upper() if settings else "INFO",
     format="%(asctime)s %(levelname)s %(name)s | %(message)s",
 )
 log = logging.getLogger("lead_agent")
+if CONFIG_PROBLEMS:
+    log.error("Invalid configuration: %s", CONFIG_PROBLEMS)
 
 
 @asynccontextmanager
@@ -84,6 +95,14 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
     )
 
 
+def require_config() -> None:
+    if CONFIG_PROBLEMS:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Server is misconfigured; see /health for the variables to fix.",
+        )
+
+
 def verify_secret(x_webhook_secret: Optional[str] = Header(default=None)) -> None:
     # compare_digest takes the same time whether the first or last character differs,
     # so an attacker cannot guess the secret by measuring response times.
@@ -96,11 +115,16 @@ def verify_secret(x_webhook_secret: Optional[str] = Header(default=None)) -> Non
 
 @app.get("/health")
 async def health():
-    """Used by Render's health check and the uptime pinger that keeps the free tier awake."""
+    """Liveness check for the host and uptime monitors; reports configuration problems."""
+    if CONFIG_PROBLEMS:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={"status": "misconfigured", "problems": CONFIG_PROBLEMS},
+        )
     return {"status": "ok"}
 
 
-@app.post("/leads", response_model=LeadOut, dependencies=[Depends(verify_secret)])
+@app.post("/leads", response_model=LeadOut, dependencies=[Depends(require_config), Depends(verify_secret)])
 async def create_lead(lead: LeadIn, request: Request) -> LeadOut:
     request_id = request.state.request_id
     score = score_lead(lead)
