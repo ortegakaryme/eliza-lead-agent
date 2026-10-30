@@ -36,11 +36,20 @@ log = logging.getLogger("lead_agent")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # One HTTP client for the app's lifetime: connection reuse keeps tool calls fast.
-    app.state.notion = NotionClient(settings.notion_api_key, settings.notion_database_id)
     log.info("Lead agent backend started")
     yield
-    await app.state.notion.close()
+    notion = getattr(app.state, "notion", None)
+    if notion:
+        await notion.close()
+
+
+def get_notion(app: FastAPI) -> NotionClient:
+    # Created on first use rather than at startup: serverless hosts such as Vercel
+    # do not always run the lifespan hook. The client is then reused while the
+    # instance stays warm, which keeps tool calls fast.
+    if getattr(app.state, "notion", None) is None:
+        app.state.notion = NotionClient(settings.notion_api_key, settings.notion_database_id)
+    return app.state.notion
 
 
 app = FastAPI(title="Commercial Real Estate Lead Agent", version="1.0.0", lifespan=lifespan)
@@ -102,7 +111,7 @@ async def create_lead(lead: LeadIn, request: Request) -> LeadOut:
     )
 
     try:
-        page_id, outcome = await request.app.state.notion.upsert_lead(lead, score, follow_up)
+        page_id, outcome = await get_notion(request.app).upsert_lead(lead, score, follow_up)
     except NotionError as exc:
         # Log the full payload so the lead can be recovered by hand from the logs.
         log.error("[%s] %s | lead payload: %s", request_id, exc, lead.model_dump_json())

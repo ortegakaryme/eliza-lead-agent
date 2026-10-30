@@ -2,7 +2,7 @@
 
 **A Spanish-speaking voice agent that answers every inbound inquiry immediately, qualifies the lead in a natural conversation, scores it with a transparent rule and drops it into a Notion pipeline, ready for same-day follow-up.**
 
-Built with ElevenLabs Agents · FastAPI · Pydantic · Notion API · Render
+Built with ElevenLabs Agents · FastAPI · Pydantic · Notion API · Vercel
 
 ---
 
@@ -32,7 +32,7 @@ She never invents availability or prices; a human advisor follows up with real o
 ```mermaid
 flowchart LR
     A[Caller<br/>phone or web widget] -- voice --> B[ElevenLabs Agent<br/>STT → LLM → TTS<br/>Spanish system prompt]
-    B -- "save_lead tool<br/>POST /leads + X-Webhook-Secret" --> C[FastAPI backend<br/>Render]
+    B -- "save_lead tool<br/>POST /leads + X-Webhook-Secret" --> C[FastAPI backend<br/>Vercel]
     C --> D{Auth<br/>Validate<br/>Score<br/>Follow-up time}
     D -- Notion API --> E[(Notion<br/>Leads database)]
     C -- "follow_up_message" --> B
@@ -138,7 +138,9 @@ lead-agent/
 │   ├── setup_notion_db.py    # Creates the Notion database
 │   └── send_test_leads.py    # Sends a Hot, a Warm and a Cold sample lead
 ├── tests/                    # Scoring, follow-up and endpoint tests (Notion mocked)
-├── render.yaml               # Render deployment blueprint
+├── api/index.py              # Vercel entry point
+├── vercel.json               # Vercel routing
+├── render.yaml               # Render blueprint (alternative host)
 ├── requirements.txt
 └── .env.example
 ```
@@ -175,14 +177,21 @@ python scripts/send_test_leads.py          # in another terminal
 
 Three pages appear in Notion: one Hot, one Warm, one Cold. The script also sends a request with a wrong secret and expects `401`. Running it again updates the same three pages, which demonstrates deduplication.
 
-### 4. Deploy to Render (free tier)
+### 4. Deploy to Vercel
+
+The app runs as a Python serverless function: `api/index.py` exposes the FastAPI app and `vercel.json` routes every path to it. Serverless instances start in about a second, so no keep-alive pinger is needed.
 
 1. Push `lead-agent/` to a GitHub repository (`.env` is ignored by git).
-2. In Render: **New → Blueprint**, select the repo. Render reads `render.yaml` and asks for `NOTION_API_KEY`, `NOTION_DATABASE_ID` and `WEBHOOK_SECRET`.
-3. When the deploy is live, open `https://<your-service>.onrender.com/health` → `{"status":"ok"}`.
-4. Test the deployed endpoint: `python scripts/send_test_leads.py https://<your-service>.onrender.com`
+2. In Vercel: **Add New → Project**, import the repository. Framework preset: **Other**. Leave build settings empty.
+3. Under **Environment Variables**, add `NOTION_API_KEY`, `NOTION_DATABASE_ID` and `WEBHOOK_SECRET`, then **Deploy**.
+4. Open `https://<your-project>.vercel.app/health` → `{"status":"ok"}`.
+5. Test the deployed endpoint: `python scripts/send_test_leads.py https://<your-project>.vercel.app`
 
-**Keep it awake.** Render's free tier sleeps after 15 minutes without traffic, and waking takes 30–60 s, too long for a live call. Create a free monitor at [UptimeRobot](https://uptimerobot.com) (or similar): HTTP(s), URL `https://<your-service>.onrender.com/health`, interval 5 minutes. For production traffic, upgrade to a paid instance, which never sleeps.
+Use the **production** domain (`<your-project>.vercel.app`) in ElevenLabs. Preview deployment URLs sit behind Vercel's login wall and will reject the agent. Vercel's Hobby plan is for non-commercial use; move to Pro (or Render's paid tier) for real client traffic.
+
+#### Alternative: Render
+
+`render.yaml` is included. In Render: **New → Blueprint**, select the repo and fill in the same three variables. Render's free tier sleeps after 15 minutes idle and takes 30–60 s to wake, so add a free [UptimeRobot](https://uptimerobot.com) monitor on `/health` every 5 minutes.
 
 ### 5. ElevenLabs agent
 
@@ -193,7 +202,7 @@ Three pages appear in Notion: one Hot, one Warm, one Cold. The script also sends
 5. **LLM:** choose a model with strong tool calling from the dropdown.
 6. **Secret:** add a workspace secret (for example `lead_webhook_secret`) with the same value as `WEBHOOK_SECRET`.
 7. **Tool:** **Tools → Add tool → Webhook**, and configure it to match [`agent/save_lead_tool.json`](agent/save_lead_tool.json):
-   - Name `save_lead`, method `POST`, URL `https://<your-service>.onrender.com/leads`
+   - Name `save_lead`, method `POST`, URL `https://<your-project>.vercel.app/leads`
    - Header `X-Webhook-Secret` → value from the secret created above
    - Body parameters exactly as in the JSON (types, enums, descriptions, required list). `conversation_id` and `caller_id` are **dynamic variables** (`system__conversation_id`, `system__caller_id`), not LLM-filled.
    - Response timeout: 20 s
@@ -206,9 +215,9 @@ Three pages appear in Notion: one Hot, one Warm, one Cold. The script also sends
 ## Security
 
 - The webhook only accepts requests with the correct `X-Webhook-Secret`. It's compared with `hmac.compare_digest`, which takes the same time regardless of where a mismatch occurs, so the secret can't be guessed from response timing.
-- Secrets live only in environment variables (`.env` locally, Render's dashboard in production) and in ElevenLabs' secret store. Nothing is hardcoded or committed.
+- Secrets live only in environment variables (`.env` locally, the hosting dashboard in production) and in ElevenLabs' secret store. Nothing is hardcoded or committed.
 - The agent itself is told to never quote prices, availability or legal and financial advice, and never to reveal the internal lead score.
-- Logs contain lead data (needed for recovery when Notion fails). Render logs are private to your account, so treat them as sensitive.
+- Logs contain lead data (needed for recovery when Notion fails). Hosting logs are private to your account, so treat them as sensitive. Vercel's Hobby plan keeps runtime logs only briefly, so check them soon after a failure.
 
 ## Testing
 

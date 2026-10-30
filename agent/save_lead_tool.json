@@ -4,7 +4,7 @@
   "description": "Guarda el prospecto calificado en el sistema de seguimiento. Úsala UNA vez, solo después de que la persona confirmó en voz alta que el resumen de sus datos es correcto. Devuelve follow_up_message, que debes comunicar a la persona para cerrar la llamada.",
   "response_timeout_secs": 20,
   "api_schema": {
-    "url": "https://YOUR-SERVICE.onrender.com/leads",
+    "url": "https://YOUR-PROJECT.vercel.app/leads",
     "method": "POST",
     "request_headers": {
       "X-Webhook-Secret": { "secret_id": "REPLACE_WITH_ELEVENLABS_SECRET_ID" }
