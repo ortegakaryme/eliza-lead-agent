@@ -1,0 +1,89 @@
+{
+  "type": "webhook",
+  "name": "save_lead",
+  "description": "Guarda el prospecto calificado en el sistema de seguimiento. Úsala UNA vez, solo después de que la persona confirmó en voz alta que el resumen de sus datos es correcto. Devuelve follow_up_message, que debes comunicar a la persona para cerrar la llamada.",
+  "response_timeout_secs": 20,
+  "api_schema": {
+    "url": "https://YOUR-SERVICE.onrender.com/leads",
+    "method": "POST",
+    "request_headers": {
+      "X-Webhook-Secret": { "secret_id": "REPLACE_WITH_ELEVENLABS_SECRET_ID" }
+    },
+    "request_body_schema": {
+      "type": "object",
+      "description": "Datos del prospecto recabados y confirmados durante la conversación.",
+      "required": ["full_name", "business_type", "property_type", "operation", "timeframe", "decision_role"],
+      "properties": {
+        "full_name": {
+          "type": "string",
+          "description": "Nombre completo de la persona, con mayúsculas iniciales."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Teléfono de contacto a 10 dígitos, solo números (ej. 7221234567). Omitir si no lo dio."
+        },
+        "email": {
+          "type": "string",
+          "description": "Correo electrónico en minúsculas y sin espacios (ej. ana.lopez@gmail.com). Omitir si no lo dio."
+        },
+        "company": {
+          "type": "string",
+          "description": "Nombre de la empresa o negocio. Omitir si no lo mencionó."
+        },
+        "business_type": {
+          "type": "string",
+          "enum": ["restaurant", "clinic", "retail_store", "office", "industrial_logistics", "other"],
+          "description": "Giro del negocio: restaurant (restaurante, cafetería, bar), clinic (clínica, consultorio, laboratorio), retail_store (tienda o comercio), office (oficina, despacho, corporativo), industrial_logistics (manufactura, logística, distribución), other (cualquier otro; detallar en notes)."
+        },
+        "property_type": {
+          "type": "string",
+          "enum": ["retail_unit", "office", "warehouse", "land"],
+          "description": "Tipo de inmueble buscado: retail_unit (local comercial), office (oficina), warehouse (bodega o nave), land (terreno)."
+        },
+        "operation": {
+          "type": "string",
+          "enum": ["lease", "purchase"],
+          "description": "lease si busca rentar, purchase si busca comprar."
+        },
+        "space_m2": {
+          "type": "number",
+          "description": "Superficie aproximada en metros cuadrados. Si dio un rango, usar el punto medio. Omitir si no sabe."
+        },
+        "zone": {
+          "type": "string",
+          "description": "Zona o colonia preferida, tal como la describió (ej. 'Metepec, cerca de Galerías', 'corredor Toluca-Lerma')."
+        },
+        "budget_min_mxn": {
+          "type": "number",
+          "description": "Presupuesto mínimo en pesos mexicanos. Renta: monto mensual. Compra: precio total. Si dio una sola cifra, usarla aquí y en budget_max_mxn. Omitir si no dio presupuesto."
+        },
+        "budget_max_mxn": {
+          "type": "number",
+          "description": "Presupuesto máximo en pesos mexicanos, mismo criterio que budget_min_mxn. Omitir si no dio presupuesto."
+        },
+        "timeframe": {
+          "type": "string",
+          "enum": ["immediate", "1_3_months", "3_6_months", "6_plus_months", "undefined"],
+          "description": "Cuándo necesita ocupar el inmueble: immediate (menos de 1 mes), 1_3_months, 3_6_months, 6_plus_months, undefined (no sabe)."
+        },
+        "decision_role": {
+          "type": "string",
+          "enum": ["decision_maker", "influencer", "researching_for_other"],
+          "description": "decision_maker si decide o firma, influencer si participa en la decisión pero no la toma, researching_for_other si investiga por encargo de alguien más."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Resumen en español de cualquier otro dato relevante: requisitos especiales, urgencia, si es propietario que quiere ofrecer un inmueble, si pidió hablar con un humano, etc."
+        },
+        "conversation_id": {
+          "type": "string",
+          "dynamic_variable": "system__conversation_id"
+        },
+        "caller_id": {
+          "type": "string",
+          "dynamic_variable": "system__caller_id"
+        }
+      }
+    }
+  }
+}

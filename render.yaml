@@ -1,0 +1,21 @@
+# Render Blueprint: Dashboard > New > Blueprint, then point it at this repository.
+services:
+  - type: web
+    name: cre-lead-agent
+    runtime: python
+    plan: free
+    region: ohio
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: NOTION_API_KEY
+        sync: false   # Render asks for the value on first deploy; it is never stored in git
+      - key: NOTION_DATABASE_ID
+        sync: false
+      - key: WEBHOOK_SECRET
+        sync: false
+      - key: TIMEZONE
+        value: America/Mexico_City
