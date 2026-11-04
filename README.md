@@ -4,6 +4,8 @@
 
 Built with ElevenLabs Agents · FastAPI · Pydantic · Notion API · Vercel
 
+**▶ Live demo: [talk to Eliza](https://eliza-lead-agent-81ex.vercel.app)** (speaks Spanish; calls are limited to 4 minutes)
+
 ---
 
 ## The business problem
