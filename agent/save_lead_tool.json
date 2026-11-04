@@ -20,7 +20,7 @@
         },
         "phone": {
           "type": "string",
-          "description": "Teléfono de contacto a 10 dígitos, solo números (ej. 7221234567). Omitir si no lo dio."
+          "description": "Teléfono de contacto a 10 dígitos, solo números (ej. 5512345678). Omitir si no lo dio."
         },
         "email": {
           "type": "string",
@@ -51,7 +51,7 @@
         },
         "zone": {
           "type": "string",
-          "description": "Zona o colonia preferida, tal como la describió (ej. 'Metepec, cerca de Galerías', 'corredor Toluca-Lerma')."
+          "description": "Zona o colonia preferida, tal como la describió (ej. 'Polanco, cerca de Masaryk', 'zona industrial de Tlalnepantla')."
         },
         "budget_min_mxn": {
           "type": "number",

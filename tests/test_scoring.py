@@ -5,7 +5,7 @@ from app.scoring import score_lead
 
 BASE = {
     "full_name": "Test Lead",
-    "phone": "7221234567",
+    "phone": "5512345678",
     "business_type": "office",
     "property_type": "office",
     "operation": "lease",
@@ -61,8 +61,8 @@ def test_contact_method_required():
 
 
 def test_caller_id_counts_as_contact_and_unset_placeholder_is_ignored():
-    l = LeadIn(**{**BASE, "phone": None, "caller_id": "+527221112233",
+    l = LeadIn(**{**BASE, "phone": None, "caller_id": "+525511122233",
                   "decision_role": "influencer", "timeframe": "undefined"})
-    assert l.best_phone == "+527221112233" and l.source == "Voice agent – phone"
+    assert l.best_phone == "+525511122233" and l.source == "Voice agent – phone"
     web = lead(decision_role="influencer", timeframe="undefined", caller_id="None")
     assert web.caller_id is None and web.source == "Voice agent – web"

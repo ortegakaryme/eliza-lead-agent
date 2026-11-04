@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     notion_database_id: str = Field(min_length=10)
     webhook_secret: str = Field(min_length=16)
     log_level: str = "INFO"
-    timezone: str = "America/Mexico_City"  # Toluca/Metepec use Central Mexico time
+    timezone: str = "America/Mexico_City"  # Mexico City and its metro area
 
 
 @lru_cache

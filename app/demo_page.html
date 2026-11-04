@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Habla con Eliza</title>
-  <meta name="description" content="Eliza, asesora virtual de inmuebles comerciales en el área metropolitana de Toluca. Un agente de voz con ElevenLabs que califica prospectos y los guarda en Notion.">
+  <meta name="description" content="Eliza, asesora virtual de inmuebles comerciales en Ciudad de México y su área metropolitana. Un agente de voz con ElevenLabs que califica prospectos y los guarda en Notion.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
@@ -53,7 +53,7 @@
     .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 400; letter-spacing: .18em; text-transform: uppercase; color: var(--on-dark-muted); }
     .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgba(95,191,143,.6); animation: pulse 2s infinite; }
     @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(95,191,143,0); } 100% { box-shadow: 0 0 0 0 rgba(95,191,143,0); } }
-    h1 { font: 400 clamp(46px, 7vw, 82px)/1.0 var(--serif); letter-spacing: -.01em; margin: 22px 0 22px; }
+    h1 { font: 400 clamp(42px, 5.6vw, 72px)/1.02 var(--serif); letter-spacing: -.01em; margin: 22px 0 22px; }
     h1 em { font-style: italic; }
     .hero-sub { font-size: 19px; font-weight: 300; color: var(--on-dark-muted); max-width: 38ch; margin: 0 0 36px; }
 
@@ -208,7 +208,7 @@
 <header class="hero">
   <div class="wrap">
     <nav>
-      <a class="brand" href="#"><b>Eliza</b><span>Inmuebles comerciales · Área metropolitana de Toluca</span></a>
+      <a class="brand" href="#"><b>Eliza</b><span>Inmuebles comerciales · CDMX y área metropolitana</span></a>
       <div class="nav-links">
         <a href="#espacios">Espacios</a>
         <a href="#como-funciona">Cómo funciona</a>
@@ -219,8 +219,8 @@
     <div class="hero-grid">
       <div>
         <div class="eyebrow"><span class="pulse"></span>Asesora virtual disponible ahora</div>
-        <h1>Tu próximo local <em>empieza</em> con una llamada.</h1>
-        <p class="hero-sub">Locales, oficinas, bodegas y terrenos en el área metropolitana de Toluca. Cuéntale a Eliza qué necesita tu negocio y un asesor te contacta hoy mismo.</p>
+        <h1>La solución inmobiliaria para tu negocio <em>empieza</em> con una llamada.</h1>
+        <p class="hero-sub">Locales, oficinas, bodegas y terrenos en Ciudad de México y su área metropolitana. Cuéntale a Eliza qué necesita tu negocio y un asesor te contacta hoy mismo.</p>
         <button class="cta" data-start type="button">
           <span class="mic" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg>
@@ -240,7 +240,7 @@
         <div class="agent-name">Eliza</div>
         <div class="status" id="status">Lista para atenderte</div>
         <div class="captions" id="captions">
-          <p class="idle-hint">Presiona “Hablar con Eliza” y permite el micrófono. Puedes decir: “Busco un local en renta en Metepec para una cafetería.”</p>
+          <p class="idle-hint">Presiona “Hablar con Eliza” y permite el micrófono. Puedes decir: “Busco un local en renta en la Roma para una cafetería.”</p>
         </div>
         <div class="saved" id="saved" hidden>✓ Prospecto registrado: un asesor te contactará</div>
         <div class="error" id="error" role="alert"></div>
@@ -272,23 +272,23 @@
       <div class="section-head">
         <div class="kicker">Espacios comerciales</div>
         <h2>Aquí te ayudamos a encontrar el lugar para crecer.</h2>
-        <p>Renta o compra en Toluca, Metepec, Lerma, Zinacantepec, San Mateo Atenco y el resto del área metropolitana.</p>
+        <p>Renta o compra en los corredores con más movimiento de la Ciudad de México y su área metropolitana, de Polanco y Santa Fe a los parques industriales del norte.</p>
       </div>
       <div class="types">
         <div class="type">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/></svg>
           <h3>Locales comerciales</h3>
-          <p>Restaurantes, cafeterías, tiendas y servicios con vista a la calle.</p>
+          <p>Restaurantes, cafeterías, tiendas y servicios a pie de calle o en plaza.</p>
         </div>
         <div class="type">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/><path d="M10 21v-3h4v3"/></svg>
           <h3>Oficinas</h3>
-          <p>Despachos, consultorios y corporativos listos para operar.</p>
+          <p>Despachos, consultorios y corporativos en Reforma, Polanco, Santa Fe e Insurgentes.</p>
         </div>
         <div class="type">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21V9l10-6 10 6v12"/><path d="M6 21v-8h12v8"/><path d="M6 17h12"/></svg>
           <h3>Bodegas y naves</h3>
-          <p>En el corredor Toluca–Lerma, con andén y acceso para tráiler.</p>
+          <p>En Tlalnepantla, Cuautitlán y Tepotzotlán, con andén y acceso para tráiler.</p>
         </div>
         <div class="type">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l5-9 4 6 3-4 6 7z"/><circle cx="17" cy="6" r="2"/></svg>
@@ -324,7 +324,7 @@
       <div class="section-head">
         <div class="kicker">About this demo</div>
         <h2>An ElevenLabs voice agent with deterministic business logic.</h2>
-        <p>Inbound commercial real estate leads in the Toluca metropolitan area, Mexico, often wait hours for a first response. Eliza answers instantly, qualifies the lead in Spanish, and hands it to the sales team as a structured, scored record in Notion.</p>
+        <p>Inbound commercial real estate leads in Mexico City and its metropolitan area often wait hours for a first response. Eliza answers instantly, qualifies the lead in Spanish, and hands it to the sales team as a structured, scored record in Notion.</p>
       </div>
       <div class="rev-grid">
         <div class="panel">

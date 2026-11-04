@@ -10,7 +10,7 @@ Built with ElevenLabs Agents · FastAPI · Pydantic · Notion API · Vercel
 
 ## The business problem
 
-I lease and sell commercial properties (retail units, offices, warehouses and land) in Toluca and Metepec, Mexico. Inquiries arrive by phone and through the website at all hours, and the first response was slow and inconsistent:
+This demo models a brokerage that leases and sells commercial properties (retail units, offices, warehouses and land) in Mexico City and its metropolitan area. Inquiries arrive by phone and through the website at all hours, and in a typical brokerage the first response is slow and inconsistent:
 
 - Calls outside business hours or during showings went unanswered.
 - Each conversation collected different information, so follow-up started with a second round of questions.
@@ -84,7 +84,7 @@ Every lead also gets a **Score reason** in Notion, e.g. `decision maker ✓ · b
 
 ## Follow-up commitment
 
-The backend decides when a person will contact the lead and returns a sentence the agent reads aloud. Default schedule (Toluca time): Mon–Fri 9:00–18:00 and Sat 10:00–14:00.
+The backend decides when a person will contact the lead and returns a sentence the agent reads aloud. Default schedule (Mexico City time): Mon–Fri 9:00–18:00 and Sat 10:00–14:00.
 
 - A lead that arrives on a business day **at least 2 hours before closing** → *"hoy antes de las 6:00 de la tarde"*
 - Otherwise → **next business day before noon** → *"mañana antes del mediodía"* / *"el lunes antes del mediodía"*
@@ -210,6 +210,8 @@ Use the **production** domain (`<your-project>.vercel.app`) in ElevenLabs. Previ
      `python scripts/sync_elevenlabs_tool.py --apply` (needs `ELEVENLABS_API_KEY` in `.env`, Agents write access only).
      It pushes every body parameter from `agent/save_lead_tool.json` and keeps the secret header as configured.
      Run it without `--apply` first to see what would change.
+   - Likewise, `python scripts/sync_elevenlabs_agent.py --apply` pushes `agent/system_prompt.es.md` and
+     `agent/first_message.es.txt` to the agent, keeping its voice, LLM, tools and limits.
 8. **Channels:**
    - *Phone:* in **Phone Numbers**, import a Twilio number (or SIP trunk) and assign the agent.
    - *Web:* copy the widget embed snippet into your website.

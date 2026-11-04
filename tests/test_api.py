@@ -12,7 +12,7 @@ from app.notion import NOTION_API, NotionClient
 SECRET = os.environ["WEBHOOK_SECRET"]
 HOT_LEAD = {
     "full_name": "Mariana Gómez",
-    "phone": "7221234567",
+    "phone": "5512345678",
     "business_type": "restaurant",
     "property_type": "retail_unit",
     "operation": "lease",
