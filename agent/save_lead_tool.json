@@ -28,7 +28,7 @@
         },
         "company": {
           "type": "string",
-          "description": "Nombre de la empresa o negocio. Omitir si no lo mencionó."
+          "description": "Nombre de la empresa o negocio, tal como lo dijo la persona. Omitir solo si el negocio aún no tiene nombre o la persona no quiso darlo."
         },
         "business_type": {
           "type": "string",

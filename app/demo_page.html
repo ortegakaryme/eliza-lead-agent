@@ -378,7 +378,12 @@
   const setStartDisabled = (disabled) =>
     document.querySelectorAll("[data-start]").forEach((b) => { b.disabled = disabled; });
 
+  // Expressive voice mode adds tone tags such as [warm] for the speech model;
+  // they shape how Eliza sounds and are not meant to be read on screen.
+  const stripToneTags = (text) => (text || "").replace(/\[[^\[\]]{1,40}\]/g, "").replace(/\s{2,}/g, " ").trim();
+
   function addCaption(role, text) {
+    text = stripToneTags(text);
     if (!text) return;
     captionsEl.querySelector(".idle-hint")?.remove();
     const p = document.createElement("p");
