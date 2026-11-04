@@ -204,7 +204,10 @@ Use the **production** domain (`<your-project>.vercel.app`) in ElevenLabs. Previ
    - Header `X-Webhook-Secret` → value from the secret created above
    - Body parameters exactly as in the JSON (types, enums, descriptions, required list). `conversation_id` and `caller_id` are **dynamic variables** (`system__conversation_id`, `system__caller_id`), not LLM-filled.
    - Response timeout: 20 s
-   - (Using the API? The JSON file is already in the tool-config shape. Replace the URL and `secret_id`.)
+   - **Faster and less error-prone:** create the tool with just the name, URL and secret header, then run
+     `python scripts/sync_elevenlabs_tool.py --apply` (needs `ELEVENLABS_API_KEY` in `.env`, Agents write access only).
+     It pushes every body parameter from `agent/save_lead_tool.json` and keeps the secret header as configured.
+     Run it without `--apply` first to see what would change.
 8. **Channels:**
    - *Phone:* in **Phone Numbers**, import a Twilio number (or SIP trunk) and assign the agent.
    - *Web:* copy the widget embed snippet into your website.
