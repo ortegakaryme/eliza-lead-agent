@@ -1,107 +1,474 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Talk to Eliza</title>
-  <meta name="description" content="A Spanish-speaking AI voice agent that qualifies commercial real estate leads and saves them to Notion. Built with ElevenLabs Agents, FastAPI and Notion.">
+  <title>Habla con Eliza</title>
+  <meta name="description" content="Eliza, asesora virtual de inmuebles comerciales en Toluca y Metepec. Un agente de voz con ElevenLabs que califica prospectos y los guarda en Notion.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #faf9f7; --surface: #ffffff; --text: #1c1b1a; --muted: #6b6762;
-      --border: #e7e4df; --accent: #c2410c; --accent-soft: #fff1e8;
-      --hot: #dc2626; --warm: #ea580c; --cold: #2563eb;
+      --ink: #0e1116; --ink-2: #161b22; --ivory: #f5f1ea; --ivory-2: #ece6dc;
+      --text: #1b1d21; --muted: #6a6560; --line: #ddd5c9;
+      --gold: #c9a26b; --gold-2: #e2c495; --on-dark: #f3eee6; --on-dark-muted: #a9a49b;
+      --hot: #e0533d; --warm: #e39a3b; --cold: #5b8bd6; --ok: #5fbf8f;
+      --serif: "Fraunces", Georgia, serif; --sans: "Inter", system-ui, -apple-system, sans-serif;
     }
     @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #141312; --surface: #1d1c1a; --text: #f2f0ec; --muted: #a8a39c;
-        --border: #2e2c29; --accent: #fb923c; --accent-soft: #2a1d14;
-        --hot: #f87171; --warm: #fb923c; --cold: #60a5fa;
-      }
+      :root { --ivory: #15181d; --ivory-2: #1c2027; --text: #ece7df; --muted: #a29c93; --line: #2c3139; }
     }
     * { box-sizing: border-box; }
-    body {
-      margin: 0; background: var(--bg); color: var(--text);
-      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--ivory); color: var(--text); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      position: relative; overflow: hidden; color: var(--on-dark);
+      background:
+        radial-gradient(900px 500px at 85% 20%, rgba(201,162,107,.18), transparent 60%),
+        radial-gradient(700px 500px at 0% 100%, rgba(91,139,214,.10), transparent 60%),
+        linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
     }
-    main { max-width: 760px; margin: 0 auto; padding: 56px 20px 96px; }
-    .eyebrow { color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
-    h1 { font-size: clamp(32px, 6vw, 44px); line-height: 1.1; margin: 8px 0 16px; letter-spacing: -.02em; }
-    h2 { font-size: 20px; margin: 48px 0 12px; }
-    p { margin: 0 0 12px; }
-    .lead { font-size: 18px; color: var(--muted); }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
-    .try { background: var(--accent-soft); border-color: transparent; margin-top: 28px; }
-    .try strong { display: block; margin-bottom: 6px; }
-    .say { font-style: italic; }
-    .small { font-size: 14px; color: var(--muted); }
-    ol { padding-left: 20px; margin: 0; }
-    li { margin-bottom: 8px; }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35;
+      background-image:
+        linear-gradient(rgba(243,238,230,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(243,238,230,.06) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+    }
+    nav { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+    .brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; }
+    .brand b { font: 600 24px/1 var(--serif); letter-spacing: -.01em; }
+    .brand span { font-size: 13px; color: var(--on-dark-muted); letter-spacing: .02em; }
+    .nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--on-dark-muted); }
+    .nav-links a { text-decoration: none; }
+    .nav-links a:hover { color: var(--on-dark); }
+
+    .hero-grid { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; padding: 48px 0 96px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-2); }
+    .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgba(95,191,143,.6); animation: pulse 2s infinite; }
+    @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(95,191,143,0); } 100% { box-shadow: 0 0 0 0 rgba(95,191,143,0); } }
+    h1 { font: 500 clamp(40px, 6vw, 68px)/1.04 var(--serif); letter-spacing: -.025em; margin: 18px 0 20px; }
+    h1 em { font-style: italic; color: var(--gold-2); }
+    .hero-sub { font-size: 19px; color: var(--on-dark-muted); max-width: 34ch; margin: 0 0 32px; }
+
+    .cta {
+      display: inline-flex; align-items: center; gap: 14px; border: 0; cursor: pointer;
+      padding: 20px 30px 20px 22px; border-radius: 999px; font: 600 18px/1 var(--sans);
+      color: var(--ink); background: linear-gradient(135deg, var(--gold-2), var(--gold));
+      box-shadow: 0 18px 40px -12px rgba(201,162,107,.55), inset 0 1px 0 rgba(255,255,255,.4);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 24px 48px -12px rgba(201,162,107,.7), inset 0 1px 0 rgba(255,255,255,.4); }
+    .cta:focus-visible { outline: 3px solid var(--on-dark); outline-offset: 3px; }
+    .cta .mic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: var(--gold-2); }
+    .cta[disabled] { opacity: .6; cursor: default; transform: none; }
+    .cta-meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; font-size: 14px; color: var(--on-dark-muted); }
+    .cta-meta span::before { content: "✓"; color: var(--gold); margin-right: 6px; }
+    .fineprint { font-size: 13px; color: var(--on-dark-muted); opacity: .8; margin-top: 14px; max-width: 46ch; }
+
+    /* ---------- Call card ---------- */
+    .call {
+      position: relative; border-radius: 28px; padding: 32px 28px 26px; min-height: 440px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border: 1px solid rgba(243,238,230,.12); backdrop-filter: blur(12px);
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      box-shadow: 0 40px 80px -30px rgba(0,0,0,.6);
+    }
+    .call-top { display: flex; justify-content: space-between; width: 100%; font-size: 13px; color: var(--on-dark-muted); }
+    .live-tag { display: none; align-items: center; gap: 6px; color: var(--hot); font-weight: 600; letter-spacing: .06em; }
+    .live-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--hot); animation: blink 1.2s infinite; }
+    @keyframes blink { 50% { opacity: .3; } }
+    body[data-call="live"] .live-tag { display: inline-flex; }
+
+    .orb-wrap { position: relative; width: 190px; height: 190px; margin: 26px 0 18px; display: grid; place-items: center; }
+    .orb-wrap::before, .orb-wrap::after {
+      content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(201,162,107,.28);
+      transform: scale(calc(1 + var(--level, 0) * .5)); transition: transform .12s ease-out;
+    }
+    .orb-wrap::after { inset: -18px; border-color: rgba(201,162,107,.14); transform: scale(calc(1 + var(--level, 0) * .8)); }
+    .orb {
+      width: 140px; height: 140px; border-radius: 50%;
+      background:
+        radial-gradient(circle at 32% 28%, #fff7e8 0%, rgba(255,247,232,0) 38%),
+        conic-gradient(from 200deg, #e2c495, #b9824c, #6d4b2f, #c9a26b, #f0d9b0, #e2c495);
+      box-shadow: 0 0 60px rgba(201,162,107,.35), inset 0 -12px 30px rgba(0,0,0,.35);
+      transform: scale(calc(1 + var(--level, 0) * .18)); transition: transform .1s ease-out;
+      animation: spin 14s linear infinite;
+    }
+    @keyframes spin { to { rotate: 1turn; } }
+    body[data-call="connecting"] .orb { animation-duration: 2.5s; opacity: .8; }
+    body[data-mode="listening"] .orb { filter: saturate(.75) brightness(.95); }
+
+    .agent-name { font: 500 26px/1.2 var(--serif); }
+    .status { font-size: 14px; color: var(--on-dark-muted); min-height: 22px; margin-top: 4px; }
+    .captions { width: 100%; min-height: 96px; margin: 18px 0 8px; display: flex; flex-direction: column; gap: 8px; justify-content: flex-end; }
+    .captions p { margin: 0; font-size: 15px; line-height: 1.45; animation: rise .35s ease; }
+    .captions .agent { color: var(--on-dark); }
+    .captions .user { color: var(--gold-2); font-style: italic; }
+    .captions .user::before { content: "Tú: "; font-style: normal; opacity: .7; }
+    @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
+    .idle-hint { font-size: 14px; color: var(--on-dark-muted); max-width: 30ch; }
+    body[data-call="live"] .idle-hint, body[data-call="connecting"] .idle-hint { display: none; }
+
+    .saved {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+      background: rgba(95,191,143,.14); color: var(--ok); font-size: 14px; font-weight: 600; animation: rise .4s ease;
+    }
+    .saved[hidden] { display: none; }
+    .call-actions { margin-top: auto; padding-top: 16px; display: flex; gap: 10px; }
+    .hangup {
+      display: none; align-items: center; gap: 8px; border: 1px solid rgba(224,83,61,.5); background: rgba(224,83,61,.12);
+      color: #ffb4a6; padding: 12px 22px; border-radius: 999px; font: 600 15px/1 var(--sans); cursor: pointer;
+    }
+    .hangup:hover { background: rgba(224,83,61,.22); }
+    body[data-call="live"] .hangup, body[data-call="connecting"] .hangup { display: inline-flex; }
+    .card-start { display: none; }
+    body[data-call="ended"] .card-start { display: inline-flex; }
+    .error { color: #ffb4a6; font-size: 14px; min-height: 0; margin-top: 8px; }
+
+    /* ---------- Sections ---------- */
+    section { padding: 96px 0; }
+    .section-head { max-width: 640px; margin-bottom: 44px; }
+    .kicker { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
+    h2 { font: 500 clamp(30px, 4vw, 44px)/1.12 var(--serif); letter-spacing: -.02em; margin: 10px 0 14px; }
+    .section-head p { color: var(--muted); font-size: 18px; margin: 0; }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .stat { padding: 30px 24px; }
+    .stat + .stat { border-left: 1px solid var(--line); }
+    .stat b { display: block; font: 500 34px/1.1 var(--serif); }
+    .stat span { color: var(--muted); font-size: 15px; }
+
+    .types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+    .type { background: var(--ivory-2); border: 1px solid var(--line); border-radius: 20px; padding: 26px 22px; transition: transform .2s ease, border-color .2s ease; }
+    .type:hover { transform: translateY(-3px); border-color: var(--gold); }
+    .type svg { width: 34px; height: 34px; color: var(--gold); }
+    .type h3 { font: 500 21px/1.2 var(--serif); margin: 18px 0 6px; }
+    .type p { color: var(--muted); font-size: 15px; margin: 0; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; counter-reset: step; }
+    .step { border-top: 1px solid var(--text); padding-top: 22px; }
+    .step::before { counter-increment: step; content: "0" counter(step); font: 500 15px var(--serif); color: var(--gold); }
+    .step h3 { font: 500 23px/1.2 var(--serif); margin: 10px 0 8px; }
+    .step p { color: var(--muted); margin: 0; }
+    .center { text-align: center; margin-top: 48px; }
+    .cta.light { box-shadow: 0 14px 30px -14px rgba(201,162,107,.8); }
+
+    /* ---------- For reviewers (English) ---------- */
+    .reviewers { background: var(--ink); color: var(--on-dark); }
+    .reviewers .section-head p { color: var(--on-dark-muted); }
+    .rev-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; }
+    .panel { border: 1px solid rgba(243,238,230,.12); border-radius: 20px; padding: 26px; background: rgba(255,255,255,.03); }
+    .panel h3 { font: 500 20px/1.3 var(--serif); margin: 0 0 14px; }
+    .panel ol { margin: 0; padding-left: 20px; color: var(--on-dark-muted); }
+    .panel li { margin-bottom: 10px; }
+    .panel li strong { color: var(--on-dark); font-weight: 600; }
+    .panel code { font-size: 13px; color: var(--gold-2); }
     table { width: 100%; border-collapse: collapse; font-size: 15px; }
-    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
-    th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
-    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
-    .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-    .chip { border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; font-size: 14px; color: var(--muted); }
-    a { color: var(--accent); }
-    .button {
-      display: inline-block; margin-top: 20px; padding: 10px 18px; border-radius: 10px;
-      background: var(--text); color: var(--bg); text-decoration: none; font-weight: 600;
+    td { padding: 11px 4px; border-bottom: 1px solid rgba(243,238,230,.1); color: var(--on-dark-muted); vertical-align: top; }
+    td:first-child { color: var(--on-dark); white-space: nowrap; padding-right: 14px; }
+    .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip { border: 1px solid rgba(243,238,230,.18); border-radius: 999px; padding: 5px 13px; font-size: 13px; color: var(--on-dark-muted); }
+    .gh { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; padding: 12px 20px; border-radius: 12px; background: var(--on-dark); color: var(--ink); text-decoration: none; font-weight: 600; }
+    footer { background: var(--ink); color: var(--on-dark-muted); font-size: 13px; padding: 26px 0 40px; border-top: 1px solid rgba(243,238,230,.08); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 920px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; padding: 28px 0 72px; }
+      .types { grid-template-columns: repeat(2, 1fr); }
+      .rev-grid { grid-template-columns: 1fr; }
     }
-    footer { margin-top: 56px; font-size: 14px; color: var(--muted); }
+    @media (max-width: 640px) {
+      .wrap { padding: 0 16px; }
+      .nav-links { display: none; }
+      .hero-sub { font-size: 17px; }
+      .cta { width: 100%; justify-content: center; }
+      .call { min-height: 400px; padding: 26px 18px 22px; }
+      section { padding: 72px 0; }
+      .stats, .steps { grid-template-columns: 1fr; }
+      .stat + .stat { border-left: 0; border-top: 1px solid var(--line); }
+      .types { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
   </style>
 </head>
-<body>
+<body data-call="idle">
+
+<header class="hero">
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="#"><b>Eliza</b><span>Inmuebles comerciales · Toluca &amp; Metepec</span></a>
+      <div class="nav-links">
+        <a href="#espacios">Espacios</a>
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#about">About this demo</a>
+      </div>
+    </nav>
+
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow"><span class="pulse"></span>Asesora virtual disponible ahora</div>
+        <h1>Tu próximo local <em>empieza</em> con una llamada.</h1>
+        <p class="hero-sub">Locales, oficinas, bodegas y terrenos en Toluca y Metepec. Cuéntale a Eliza qué necesita tu negocio y un asesor te contacta hoy mismo.</p>
+        <button class="cta" data-start type="button">
+          <span class="mic" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg>
+          </span>
+          <span class="cta-label">Hablar con Eliza ahora</span>
+        </button>
+        <div class="cta-meta"><span>Gratis</span><span>En español</span><span>Sin formularios</span></div>
+        <p class="fineprint">Es una demostración: usa datos de prueba. Lo que digas se guarda como prospecto de ejemplo. Llamadas de hasta 4 minutos.</p>
+      </div>
+
+      <div class="call" id="call" aria-live="polite">
+        <div class="call-top">
+          <span>Asesora virtual</span>
+          <span class="live-tag"><i></i>EN VIVO <span id="timer">0:00</span></span>
+        </div>
+        <div class="orb-wrap" id="orbWrap"><div class="orb"></div></div>
+        <div class="agent-name">Eliza</div>
+        <div class="status" id="status">Lista para atenderte</div>
+        <div class="captions" id="captions">
+          <p class="idle-hint">Presiona “Hablar con Eliza” y permite el micrófono. Puedes decir: “Busco un local en renta en Metepec para una cafetería.”</p>
+        </div>
+        <div class="saved" id="saved" hidden>✓ Prospecto registrado: un asesor te contactará</div>
+        <div class="error" id="error" role="alert"></div>
+        <div class="call-actions">
+          <button class="hangup" id="hangup" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85a1 1 0 0 1-1.41-.01L.29 13.08a1 1 0 0 1 0-1.41C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67a1 1 0 0 1 0 1.41l-2.48 2.48a1 1 0 0 1-1.41.01 11.3 11.3 0 0 0-2.66-1.85 1 1 0 0 1-.56-.9v-3.1C15.15 9.25 13.6 9 12 9z"/></svg>
+            Colgar
+          </button>
+          <button class="cta card-start" data-start type="button"><span class="cta-label">Llamar de nuevo</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
 <main>
-  <div class="eyebrow">ElevenLabs Agents demo</div>
-  <h1>Eliza answers every lead, instantly, in Spanish.</h1>
-  <p class="lead">A voice agent for a commercial real estate business in Toluca and Metepec, Mexico. She qualifies the inquiry in a natural conversation, then a backend scores the lead and saves it to a Notion pipeline for same-day follow-up.</p>
+  <section>
+    <div class="wrap">
+      <div class="stats">
+        <div class="stat"><b>24/7</b><span>Atención inmediata, también fuera de horario</span></div>
+        <div class="stat"><b>&lt; 3 min</b><span>Para entender lo que tu negocio necesita</span></div>
+        <div class="stat"><b>Mismo día</b><span>Un asesor humano te da seguimiento</span></div>
+      </div>
+    </div>
+  </section>
 
-  <div class="card try">
-    <strong>Try it: click the call button in the bottom-right corner.</strong>
-    <p>Eliza speaks Spanish. You could say:
-      <span class="say">"Hola, busco un local en renta en Metepec para una cafetería, de unos 100 metros."</span></p>
-    <p class="small">Calls are limited to 4 minutes. Please use made-up names and numbers: what you say becomes a lead in a demo database.</p>
-  </div>
+  <section id="espacios" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Espacios comerciales</div>
+        <h2>Aquí te ayudamos a encontrar el lugar para crecer.</h2>
+        <p>Renta o compra en las zonas con más movimiento del Valle de Toluca.</p>
+      </div>
+      <div class="types">
+        <div class="type">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/><path d="M10 20v-5h4v5"/></svg>
+          <h3>Locales comerciales</h3>
+          <p>Restaurantes, cafeterías, tiendas y servicios con vista a la calle.</p>
+        </div>
+        <div class="type">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2"/><path d="M10 21v-3h4v3"/></svg>
+          <h3>Oficinas</h3>
+          <p>Despachos, consultorios y corporativos listos para operar.</p>
+        </div>
+        <div class="type">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 21V9l10-6 10 6v12"/><path d="M6 21v-8h12v8"/><path d="M6 17h12"/></svg>
+          <h3>Bodegas y naves</h3>
+          <p>En el corredor Toluca–Lerma, con andén y acceso para tráiler.</p>
+        </div>
+        <div class="type">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l5-9 4 6 3-4 6 7z"/><circle cx="17" cy="6" r="2"/></svg>
+          <h3>Terrenos</h3>
+          <p>Para desarrollar tu proyecto comercial o industrial.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <h2>How it works</h2>
-  <div class="card">
-    <ol>
-      <li><strong>Conversation (ElevenLabs).</strong> Eliza asks one question at a time, offers budget ranges when the caller is unsure, and reads the details back for confirmation.</li>
-      <li><strong>Server tool.</strong> After the caller confirms, she calls <code>save_lead</code>, an authenticated webhook on a FastAPI backend. Conversation ID and caller ID come from dynamic variables, not from the model.</li>
-      <li><strong>Deterministic logic.</strong> The backend validates the data, scores the lead and computes the callback time from business hours, then writes the lead to Notion.</li>
-      <li><strong>Close.</strong> The backend's reply tells Eliza exactly when a person will call back, so she never promises a time the team can't keep.</li>
-    </ol>
-  </div>
+  <section id="como-funciona" style="background:var(--ivory-2)">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Cómo funciona</div>
+        <h2>Sin esperas, sin formularios.</h2>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Platicas con Eliza</h3><p>Te pregunta qué buscas, dónde, de qué tamaño y para cuándo. Una pregunta a la vez, como con una asesora.</p></div>
+        <div class="step"><h3>Confirma tus datos</h3><p>Antes de colgar te lee un resumen para que todo quede correcto. Nunca inventa precios ni disponibilidad.</p></div>
+        <div class="step"><h3>Te contactamos hoy</h3><p>Un asesor recibe tu solicitud al instante y te llama con opciones reales, el mismo día.</p></div>
+      </div>
+      <div class="center">
+        <button class="cta light" data-start type="button">
+          <span class="mic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg></span>
+          <span class="cta-label">Hablar con Eliza ahora</span>
+        </button>
+      </div>
+    </div>
+  </section>
 
-  <h2>Lead scoring, in code, not in the LLM</h2>
-  <div class="card">
-    <table>
-      <thead><tr><th>Score</th><th>Rule</th></tr></thead>
-      <tbody>
-        <tr><td><span class="dot" style="background:var(--hot)"></span>Hot</td><td>Decision maker + budget defined + moving in within 3 months</td></tr>
-        <tr><td><span class="dot" style="background:var(--warm)"></span>Warm</td><td>Two of the three</td></tr>
-        <tr><td><span class="dot" style="background:var(--cold)"></span>Cold</td><td>One or none</td></tr>
-      </tbody>
-    </table>
-    <p class="small" style="margin-top:12px">Every lead also gets a readable reason, e.g. <code>decision maker ✓ · budget ✓ · timing ✗ (3–6 months)</code>.</p>
-  </div>
-
-  <div class="stack">
-    <span class="chip">ElevenLabs Agents</span>
-    <span class="chip">Server tools</span>
-    <span class="chip">Dynamic variables</span>
-    <span class="chip">FastAPI</span>
-    <span class="chip">Pydantic</span>
-    <span class="chip">Notion API</span>
-    <span class="chip">Vercel</span>
-  </div>
-
-  <a class="button" href="https://github.com/ortegakaryme/eliza-lead-agent">View the code on GitHub</a>
-
-  <footer>Demo project. Eliza does not quote real prices or availability.</footer>
+  <section class="reviewers" id="about" lang="en">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">About this demo</div>
+        <h2>An ElevenLabs voice agent with deterministic business logic.</h2>
+        <p>Inbound commercial real estate leads in Mexico often wait hours for a first response. Eliza answers instantly, qualifies the lead in Spanish, and hands it to the sales team as a structured, scored record in Notion.</p>
+      </div>
+      <div class="rev-grid">
+        <div class="panel">
+          <h3>How it works</h3>
+          <ol>
+            <li><strong>Conversation.</strong> An ElevenLabs agent with a Spanish system prompt asks one question at a time, offers budget ranges when the caller is unsure, and confirms the details back.</li>
+            <li><strong>Server tool.</strong> After confirmation it calls <code>save_lead</code>, an authenticated FastAPI webhook. Conversation ID and caller ID come from dynamic variables, never from the model.</li>
+            <li><strong>Deterministic logic.</strong> Pydantic validates the payload, plain Python scores the lead and computes the callback time from business hours, then the lead is written to Notion.</li>
+            <li><strong>Close.</strong> The tool response tells the agent exactly when a person will call, so it never promises a time the team can't keep.</li>
+          </ol>
+        </div>
+        <div class="panel">
+          <h3>Lead scoring lives in code</h3>
+          <table>
+            <tr><td><span class="dot" style="background:var(--hot)"></span>Hot</td><td>Decision maker + budget + moving in within 3 months</td></tr>
+            <tr><td><span class="dot" style="background:var(--warm)"></span>Warm</td><td>Two of the three</td></tr>
+            <tr><td><span class="dot" style="background:var(--cold)"></span>Cold</td><td>One or none</td></tr>
+          </table>
+          <p style="color:var(--on-dark-muted);font-size:14px;margin:14px 0 0">The tool definition is versioned in the repo and synced to ElevenLabs through the API.</p>
+        </div>
+      </div>
+      <div class="chips">
+        <span class="chip">ElevenLabs Agents</span><span class="chip">Server tools</span><span class="chip">Dynamic variables</span>
+        <span class="chip">@elevenlabs/client</span><span class="chip">FastAPI</span><span class="chip">Pydantic</span><span class="chip">Notion API</span><span class="chip">Vercel</span>
+      </div>
+      <a class="gh" href="https://github.com/ortegakaryme/eliza-lead-agent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+        View the code on GitHub
+      </a>
+    </div>
+  </section>
 </main>
 
-<elevenlabs-convai agent-id="agent_6701m65p3x45fb59cqr5hwnr5ns5"></elevenlabs-convai>
-<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+<footer>
+  <div class="wrap">Proyecto de demostración. Eliza no cotiza precios ni disponibilidad reales; un asesor humano da seguimiento.</div>
+</footer>
+
+<script type="module">
+  import { Conversation } from "https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.30.0/+esm";
+
+  const AGENT_ID = "agent_6701m65p3x45fb59cqr5hwnr5ns5";
+  const MAX_SECONDS = 240;
+  const body = document.body;
+  const $ = (id) => document.getElementById(id);
+  const statusEl = $("status"), captionsEl = $("captions"), timerEl = $("timer");
+  const savedEl = $("saved"), errorEl = $("error"), orbWrap = $("orbWrap");
+  let conversation = null, startedAt = 0, timerId = null, frameId = null;
+
+  const setStatus = (text) => { statusEl.textContent = text; };
+  const showError = (text) => { errorEl.textContent = text; };
+  const setStartDisabled = (disabled) =>
+    document.querySelectorAll("[data-start]").forEach((b) => { b.disabled = disabled; });
+
+  function addCaption(role, text) {
+    if (!text) return;
+    captionsEl.querySelector(".idle-hint")?.remove();
+    const p = document.createElement("p");
+    p.className = role === "user" ? "user" : "agent";
+    p.textContent = text;
+    captionsEl.appendChild(p);
+    while (captionsEl.children.length > 3) captionsEl.firstElementChild.remove();
+  }
+
+  function tick() {
+    const s = Math.floor((Date.now() - startedAt) / 1000);
+    timerEl.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")} / ${MAX_SECONDS / 60}:00`;
+  }
+
+  function animate() {
+    if (!conversation) return;
+    const speaking = body.dataset.mode === "speaking";
+    const level = speaking ? conversation.getOutputVolume() : conversation.getInputVolume();
+    orbWrap.style.setProperty("--level", Math.min(1, level * 1.6).toFixed(3));
+    frameId = requestAnimationFrame(animate);
+  }
+
+  function finish() {
+    conversation = null;
+    clearInterval(timerId);
+    cancelAnimationFrame(frameId);
+    orbWrap.style.setProperty("--level", 0);
+    body.dataset.call = "ended";
+    body.dataset.mode = "";
+    setStatus("Llamada terminada. ¡Gracias por llamar!");
+    setStartDisabled(false);
+  }
+
+  async function start() {
+    if (conversation || body.dataset.call === "connecting") return;
+    showError("");
+    savedEl.hidden = true;
+    captionsEl.replaceChildren();
+    body.dataset.call = "connecting";
+    setStatus("Conectando con Eliza…");
+    setStartDisabled(true);
+    if (window.matchMedia("(max-width: 920px)").matches) $("call").scrollIntoView({ block: "center" });
+
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      body.dataset.call = "idle";
+      setStatus("Lista para atenderte");
+      setStartDisabled(false);
+      showError("Necesitamos permiso para usar tu micrófono. Actívalo en tu navegador e inténtalo de nuevo.");
+      return;
+    }
+
+    try {
+      conversation = await Conversation.startSession({
+        agentId: AGENT_ID,
+        onConnect: () => {
+          body.dataset.call = "live";
+          startedAt = Date.now();
+          tick();
+          timerId = setInterval(tick, 1000);
+          animate();
+        },
+        onDisconnect: finish,
+        onError: (message) => {
+          console.error("Eliza error:", message);
+          showError("Hubo un problema con la llamada. Intenta de nuevo en un momento.");
+        },
+        onModeChange: ({ mode }) => {
+          body.dataset.mode = mode;
+          setStatus(mode === "speaking" ? "Eliza está hablando" : "Te escucho…");
+        },
+        onMessage: ({ message, role, source }) => addCaption(role || (source === "ai" ? "agent" : "user"), message),
+        onAgentToolResponse: (event) => {
+          if (event && event.tool_name === "save_lead" && !event.is_error) savedEl.hidden = false;
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      conversation = null;
+      body.dataset.call = "idle";
+      setStatus("Lista para atenderte");
+      setStartDisabled(false);
+      showError("No se pudo iniciar la llamada. Revisa tu conexión e inténtalo otra vez.");
+    }
+  }
+
+  document.querySelectorAll("[data-start]").forEach((b) => b.addEventListener("click", start));
+  $("hangup").addEventListener("click", async () => {
+    if (conversation) await conversation.endSession();
+    else finish();
+  });
+</script>
 </body>
 </html>

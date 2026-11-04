@@ -109,8 +109,9 @@ def test_notion_failure_returns_502(make_client):
     assert "manual recovery" in r.json()["detail"]
 
 
-def test_demo_page_embeds_the_agent_widget(make_client):
+def test_demo_page_starts_calls_with_the_agent(make_client):
     client = make_client(FakeNotion())
     r = client.get("/")
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
-    assert '<elevenlabs-convai agent-id="agent_' in r.text
+    assert 'const AGENT_ID = "agent_' in r.text
+    assert "@elevenlabs/client@" in r.text and "data-start" in r.text
