@@ -107,3 +107,10 @@ def test_notion_failure_returns_502(make_client):
     r = client.post("/leads", json=HOT_LEAD, headers={"X-Webhook-Secret": SECRET})
     assert r.status_code == 502
     assert "manual recovery" in r.json()["detail"]
+
+
+def test_demo_page_embeds_the_agent_widget(make_client):
+    client = make_client(FakeNotion())
+    r = client.get("/")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
+    assert '<elevenlabs-convai agent-id="agent_' in r.text

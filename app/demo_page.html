@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Talk to Eliza</title>
+  <meta name="description" content="A Spanish-speaking AI voice agent that qualifies commercial real estate leads and saves them to Notion. Built with ElevenLabs Agents, FastAPI and Notion.">
+  <style>
+    :root {
+      --bg: #faf9f7; --surface: #ffffff; --text: #1c1b1a; --muted: #6b6762;
+      --border: #e7e4df; --accent: #c2410c; --accent-soft: #fff1e8;
+      --hot: #dc2626; --warm: #ea580c; --cold: #2563eb;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141312; --surface: #1d1c1a; --text: #f2f0ec; --muted: #a8a39c;
+        --border: #2e2c29; --accent: #fb923c; --accent-soft: #2a1d14;
+        --hot: #f87171; --warm: #fb923c; --cold: #60a5fa;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    main { max-width: 760px; margin: 0 auto; padding: 56px 20px 96px; }
+    .eyebrow { color: var(--accent); font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
+    h1 { font-size: clamp(32px, 6vw, 44px); line-height: 1.1; margin: 8px 0 16px; letter-spacing: -.02em; }
+    h2 { font-size: 20px; margin: 48px 0 12px; }
+    p { margin: 0 0 12px; }
+    .lead { font-size: 18px; color: var(--muted); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+    .try { background: var(--accent-soft); border-color: transparent; margin-top: 28px; }
+    .try strong { display: block; margin-bottom: 6px; }
+    .say { font-style: italic; }
+    .small { font-size: 14px; color: var(--muted); }
+    ol { padding-left: 20px; margin: 0; }
+    li { margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: .03em; }
+    .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
+    .stack { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .chip { border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; font-size: 14px; color: var(--muted); }
+    a { color: var(--accent); }
+    .button {
+      display: inline-block; margin-top: 20px; padding: 10px 18px; border-radius: 10px;
+      background: var(--text); color: var(--bg); text-decoration: none; font-weight: 600;
+    }
+    footer { margin-top: 56px; font-size: 14px; color: var(--muted); }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">ElevenLabs Agents demo</div>
+  <h1>Eliza answers every lead, instantly, in Spanish.</h1>
+  <p class="lead">A voice agent for a commercial real estate business in Toluca and Metepec, Mexico. She qualifies the inquiry in a natural conversation, then a backend scores the lead and saves it to a Notion pipeline for same-day follow-up.</p>
+
+  <div class="card try">
+    <strong>Try it: click the call button in the bottom-right corner.</strong>
+    <p>Eliza speaks Spanish. You could say:
+      <span class="say">"Hola, busco un local en renta en Metepec para una cafetería, de unos 100 metros."</span></p>
+    <p class="small">Calls are limited to 4 minutes. Please use made-up names and numbers: what you say becomes a lead in a demo database.</p>
+  </div>
+
+  <h2>How it works</h2>
+  <div class="card">
+    <ol>
+      <li><strong>Conversation (ElevenLabs).</strong> Eliza asks one question at a time, offers budget ranges when the caller is unsure, and reads the details back for confirmation.</li>
+      <li><strong>Server tool.</strong> After the caller confirms, she calls <code>save_lead</code>, an authenticated webhook on a FastAPI backend. Conversation ID and caller ID come from dynamic variables, not from the model.</li>
+      <li><strong>Deterministic logic.</strong> The backend validates the data, scores the lead and computes the callback time from business hours, then writes the lead to Notion.</li>
+      <li><strong>Close.</strong> The backend's reply tells Eliza exactly when a person will call back, so she never promises a time the team can't keep.</li>
+    </ol>
+  </div>
+
+  <h2>Lead scoring, in code, not in the LLM</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Score</th><th>Rule</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dot" style="background:var(--hot)"></span>Hot</td><td>Decision maker + budget defined + moving in within 3 months</td></tr>
+        <tr><td><span class="dot" style="background:var(--warm)"></span>Warm</td><td>Two of the three</td></tr>
+        <tr><td><span class="dot" style="background:var(--cold)"></span>Cold</td><td>One or none</td></tr>
+      </tbody>
+    </table>
+    <p class="small" style="margin-top:12px">Every lead also gets a readable reason, e.g. <code>decision maker ✓ · budget ✓ · timing ✗ (3–6 months)</code>.</p>
+  </div>
+
+  <div class="stack">
+    <span class="chip">ElevenLabs Agents</span>
+    <span class="chip">Server tools</span>
+    <span class="chip">Dynamic variables</span>
+    <span class="chip">FastAPI</span>
+    <span class="chip">Pydantic</span>
+    <span class="chip">Notion API</span>
+    <span class="chip">Vercel</span>
+  </div>
+
+  <a class="button" href="https://github.com/ortegakaryme/eliza-lead-agent">View the code on GitHub</a>
+
+  <footer>Demo project. Eliza does not quote real prices or availability.</footer>
+</main>
+
+<elevenlabs-convai agent-id="agent_6701m65p3x45fb59cqr5hwnr5ns5"></elevenlabs-convai>
+<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+</body>
+</html>

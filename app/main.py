@@ -13,11 +13,12 @@ import logging
 import time
 import uuid
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Optional
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import ValidationError
 
 from .config import get_settings
@@ -111,6 +112,15 @@ def verify_secret(x_webhook_secret: Optional[str] = Header(default=None)) -> Non
     ):
         log.warning("Rejected request with missing or invalid X-Webhook-Secret")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid webhook secret")
+
+
+DEMO_PAGE = (Path(__file__).parent / "demo_page.html").read_text(encoding="utf-8")
+
+
+@app.get("/", response_class=HTMLResponse, include_in_schema=False)
+async def demo_page():
+    """Public demo page with the ElevenLabs widget, so visitors can talk to Eliza."""
+    return DEMO_PAGE
 
 
 @app.get("/health")
