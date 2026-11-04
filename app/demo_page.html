@@ -4,24 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Habla con Eliza</title>
-  <meta name="description" content="Eliza, asesora virtual de inmuebles comerciales en Toluca y Metepec. Un agente de voz con ElevenLabs que califica prospectos y los guarda en Notion.">
+  <meta name="description" content="Eliza, asesora virtual de inmuebles comerciales en el área metropolitana de Toluca. Un agente de voz con ElevenLabs que califica prospectos y los guarda en Notion.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --ink: #0e1116; --ink-2: #161b22; --ivory: #f5f1ea; --ivory-2: #ece6dc;
       --text: #1b1d21; --muted: #6a6560; --line: #ddd5c9;
-      --gold: #c9a26b; --gold-2: #e2c495; --on-dark: #f3eee6; --on-dark-muted: #a9a49b;
+      --gold: #a3957f; --gold-2: #d8cfc1; --on-dark: #f3eee6; --on-dark-muted: #a9a49b;
       --hot: #e0533d; --warm: #e39a3b; --cold: #5b8bd6; --ok: #5fbf8f;
-      --serif: "Fraunces", Georgia, serif; --sans: "Inter", system-ui, -apple-system, sans-serif;
+      --serif: "Cormorant Garamond", "Times New Roman", serif; --sans: "Jost", system-ui, -apple-system, sans-serif;
     }
     @media (prefers-color-scheme: dark) {
       :root { --ivory: #15181d; --ivory-2: #1c2027; --text: #ece7df; --muted: #a29c93; --line: #2c3139; }
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--ivory); color: var(--text); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
+    body { margin: 0; background: var(--ivory); color: var(--text); font: 300 17px/1.65 var(--sans); -webkit-font-smoothing: antialiased; }
     a { color: inherit; }
     .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
 
@@ -29,8 +29,8 @@
     .hero {
       position: relative; overflow: hidden; color: var(--on-dark);
       background:
-        radial-gradient(900px 500px at 85% 20%, rgba(201,162,107,.18), transparent 60%),
-        radial-gradient(700px 500px at 0% 100%, rgba(91,139,214,.10), transparent 60%),
+        radial-gradient(900px 500px at 85% 20%, rgba(216,207,193,.08), transparent 60%),
+        radial-gradient(700px 500px at 0% 100%, rgba(216,207,193,.04), transparent 60%),
         linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
     }
     .hero::before {
@@ -43,38 +43,38 @@
     }
     nav { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
     .brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; }
-    .brand b { font: 600 24px/1 var(--serif); letter-spacing: -.01em; }
-    .brand span { font-size: 13px; color: var(--on-dark-muted); letter-spacing: .02em; }
-    .nav-links { display: flex; gap: 22px; font-size: 14px; color: var(--on-dark-muted); }
+    .brand b { font: 500 28px/1 var(--serif); letter-spacing: .02em; }
+    .brand span { font-size: 12px; color: var(--on-dark-muted); letter-spacing: .14em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 28px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-muted); }
     .nav-links a { text-decoration: none; }
     .nav-links a:hover { color: var(--on-dark); }
 
     .hero-grid { position: relative; display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; padding: 48px 0 96px; }
-    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-2); }
+    .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 400; letter-spacing: .18em; text-transform: uppercase; color: var(--on-dark-muted); }
     .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgba(95,191,143,.6); animation: pulse 2s infinite; }
     @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(95,191,143,0); } 100% { box-shadow: 0 0 0 0 rgba(95,191,143,0); } }
-    h1 { font: 500 clamp(40px, 6vw, 68px)/1.04 var(--serif); letter-spacing: -.025em; margin: 18px 0 20px; }
-    h1 em { font-style: italic; color: var(--gold-2); }
-    .hero-sub { font-size: 19px; color: var(--on-dark-muted); max-width: 34ch; margin: 0 0 32px; }
+    h1 { font: 400 clamp(46px, 7vw, 82px)/1.0 var(--serif); letter-spacing: -.01em; margin: 22px 0 22px; }
+    h1 em { font-style: italic; }
+    .hero-sub { font-size: 19px; font-weight: 300; color: var(--on-dark-muted); max-width: 38ch; margin: 0 0 36px; }
 
     .cta {
       display: inline-flex; align-items: center; gap: 14px; border: 0; cursor: pointer;
-      padding: 20px 30px 20px 22px; border-radius: 999px; font: 600 18px/1 var(--sans);
-      color: var(--ink); background: linear-gradient(135deg, var(--gold-2), var(--gold));
-      box-shadow: 0 18px 40px -12px rgba(201,162,107,.55), inset 0 1px 0 rgba(255,255,255,.4);
-      transition: transform .2s ease, box-shadow .2s ease;
+      padding: 14px 30px 14px 14px; border-radius: 2px; font: 500 14px/1 var(--sans);
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--ink); background: var(--on-dark); box-shadow: none;
+      transition: background .2s ease, transform .2s ease;
     }
-    .cta:hover { transform: translateY(-2px); box-shadow: 0 24px 48px -12px rgba(201,162,107,.7), inset 0 1px 0 rgba(255,255,255,.4); }
+    .cta:hover { background: #ffffff; transform: translateY(-1px); }
     .cta:focus-visible { outline: 3px solid var(--on-dark); outline-offset: 3px; }
-    .cta .mic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: var(--gold-2); }
+    .cta .mic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ink); color: var(--on-dark); }
     .cta[disabled] { opacity: .6; cursor: default; transform: none; }
-    .cta-meta { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 18px; font-size: 14px; color: var(--on-dark-muted); }
-    .cta-meta span::before { content: "✓"; color: var(--gold); margin-right: 6px; }
+    .cta-meta { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 20px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-muted); }
+    .cta-meta span::before { content: "—"; color: var(--gold); margin-right: 8px; }
     .fineprint { font-size: 13px; color: var(--on-dark-muted); opacity: .8; margin-top: 14px; max-width: 46ch; }
 
     /* ---------- Call card ---------- */
     .call {
-      position: relative; border-radius: 28px; padding: 32px 28px 26px; min-height: 440px;
+      position: relative; border-radius: 6px; padding: 32px 28px 26px; min-height: 440px;
       background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
       border: 1px solid rgba(243,238,230,.12); backdrop-filter: blur(12px);
       display: flex; flex-direction: column; align-items: center; text-align: center;
@@ -88,16 +88,16 @@
 
     .orb-wrap { position: relative; width: 190px; height: 190px; margin: 26px 0 18px; display: grid; place-items: center; }
     .orb-wrap::before, .orb-wrap::after {
-      content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(201,162,107,.28);
+      content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(216,207,193,.28);
       transform: scale(calc(1 + var(--level, 0) * .5)); transition: transform .12s ease-out;
     }
-    .orb-wrap::after { inset: -18px; border-color: rgba(201,162,107,.14); transform: scale(calc(1 + var(--level, 0) * .8)); }
+    .orb-wrap::after { inset: -18px; border-color: rgba(216,207,193,.14); transform: scale(calc(1 + var(--level, 0) * .8)); }
     .orb {
       width: 140px; height: 140px; border-radius: 50%;
       background:
-        radial-gradient(circle at 32% 28%, #fff7e8 0%, rgba(255,247,232,0) 38%),
-        conic-gradient(from 200deg, #e2c495, #b9824c, #6d4b2f, #c9a26b, #f0d9b0, #e2c495);
-      box-shadow: 0 0 60px rgba(201,162,107,.35), inset 0 -12px 30px rgba(0,0,0,.35);
+        radial-gradient(circle at 32% 28%, #ffffff 0%, rgba(255,255,255,0) 40%),
+        conic-gradient(from 200deg, #e9e4dc, #b8b0a4, #6f6a63, #a39a8d, #f3efe8, #e9e4dc);
+      box-shadow: 0 0 50px rgba(233,228,220,.14), inset 0 -12px 30px rgba(0,0,0,.4);
       transform: scale(calc(1 + var(--level, 0) * .18)); transition: transform .1s ease-out;
       animation: spin 14s linear infinite;
     }
@@ -105,12 +105,12 @@
     body[data-call="connecting"] .orb { animation-duration: 2.5s; opacity: .8; }
     body[data-mode="listening"] .orb { filter: saturate(.75) brightness(.95); }
 
-    .agent-name { font: 500 26px/1.2 var(--serif); }
+    .agent-name { font: 500 32px/1.2 var(--serif); letter-spacing: .02em; }
     .status { font-size: 14px; color: var(--on-dark-muted); min-height: 22px; margin-top: 4px; }
     .captions { width: 100%; min-height: 96px; margin: 18px 0 8px; display: flex; flex-direction: column; gap: 8px; justify-content: flex-end; }
     .captions p { margin: 0; font-size: 15px; line-height: 1.45; animation: rise .35s ease; }
     .captions .agent { color: var(--on-dark); }
-    .captions .user { color: var(--gold-2); font-style: italic; }
+    .captions .user { color: var(--on-dark-muted); font-style: italic; }
     .captions .user::before { content: "Tú: "; font-style: normal; opacity: .7; }
     @keyframes rise { from { opacity: 0; transform: translateY(6px); } }
     .idle-hint { font-size: 14px; color: var(--on-dark-muted); max-width: 30ch; }
@@ -124,7 +124,7 @@
     .call-actions { margin-top: auto; padding-top: 16px; display: flex; gap: 10px; }
     .hangup {
       display: none; align-items: center; gap: 8px; border: 1px solid rgba(224,83,61,.5); background: rgba(224,83,61,.12);
-      color: #ffb4a6; padding: 12px 22px; border-radius: 999px; font: 600 15px/1 var(--sans); cursor: pointer;
+      color: #ffb4a6; padding: 12px 22px; border-radius: 2px; font: 600 15px/1 var(--sans); cursor: pointer;
     }
     .hangup:hover { background: rgba(224,83,61,.22); }
     body[data-call="live"] .hangup, body[data-call="connecting"] .hangup { display: inline-flex; }
@@ -135,37 +135,39 @@
     /* ---------- Sections ---------- */
     section { padding: 96px 0; }
     .section-head { max-width: 640px; margin-bottom: 44px; }
-    .kicker { font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); }
-    h2 { font: 500 clamp(30px, 4vw, 44px)/1.12 var(--serif); letter-spacing: -.02em; margin: 10px 0 14px; }
+    .kicker { font-size: 12px; font-weight: 400; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+    h2 { font: 400 clamp(34px, 4.6vw, 54px)/1.08 var(--serif); letter-spacing: -.005em; margin: 12px 0 16px; }
     .section-head p { color: var(--muted); font-size: 18px; margin: 0; }
 
     .stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .stat { padding: 30px 24px; }
     .stat + .stat { border-left: 1px solid var(--line); }
-    .stat b { display: block; font: 500 34px/1.1 var(--serif); }
+    .stat b { display: block; font: 400 42px/1.1 var(--serif); }
     .stat span { color: var(--muted); font-size: 15px; }
 
     .types { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-    .type { background: var(--ivory-2); border: 1px solid var(--line); border-radius: 20px; padding: 26px 22px; transition: transform .2s ease, border-color .2s ease; }
-    .type:hover { transform: translateY(-3px); border-color: var(--gold); }
+    .type { background: var(--ivory-2); border: 1px solid var(--line); border-radius: 4px; padding: 26px 22px; transition: transform .2s ease, border-color .2s ease; }
+    .type:hover { transform: translateY(-3px); border-color: var(--text); }
     .type svg { width: 34px; height: 34px; color: var(--gold); }
-    .type h3 { font: 500 21px/1.2 var(--serif); margin: 18px 0 6px; }
+    .type h3 { font: 500 25px/1.2 var(--serif); margin: 18px 0 6px; }
     .type p { color: var(--muted); font-size: 15px; margin: 0; }
 
     .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; counter-reset: step; }
     .step { border-top: 1px solid var(--text); padding-top: 22px; }
-    .step::before { counter-increment: step; content: "0" counter(step); font: 500 15px var(--serif); color: var(--gold); }
-    .step h3 { font: 500 23px/1.2 var(--serif); margin: 10px 0 8px; }
+    .step::before { counter-increment: step; content: "0" counter(step); font: 400 13px var(--sans); letter-spacing: .16em; color: var(--gold); }
+    .step h3 { font: 500 27px/1.2 var(--serif); margin: 10px 0 8px; }
     .step p { color: var(--muted); margin: 0; }
     .center { text-align: center; margin-top: 48px; }
-    .cta.light { box-shadow: 0 14px 30px -14px rgba(201,162,107,.8); }
+    .cta.light { background: var(--ink); color: var(--on-dark); }
+    .cta.light .mic { background: var(--on-dark); color: var(--ink); }
+    .cta.light:hover { background: #000; }
 
     /* ---------- For reviewers (English) ---------- */
     .reviewers { background: var(--ink); color: var(--on-dark); }
     .reviewers .section-head p { color: var(--on-dark-muted); }
     .rev-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; }
-    .panel { border: 1px solid rgba(243,238,230,.12); border-radius: 20px; padding: 26px; background: rgba(255,255,255,.03); }
-    .panel h3 { font: 500 20px/1.3 var(--serif); margin: 0 0 14px; }
+    .panel { border: 1px solid rgba(243,238,230,.12); border-radius: 4px; padding: 26px; background: rgba(255,255,255,.03); }
+    .panel h3 { font: 500 25px/1.3 var(--serif); margin: 0 0 14px; }
     .panel ol { margin: 0; padding-left: 20px; color: var(--on-dark-muted); }
     .panel li { margin-bottom: 10px; }
     .panel li strong { color: var(--on-dark); font-weight: 600; }
@@ -176,7 +178,7 @@
     .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 8px; }
     .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
     .chip { border: 1px solid rgba(243,238,230,.18); border-radius: 999px; padding: 5px 13px; font-size: 13px; color: var(--on-dark-muted); }
-    .gh { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; padding: 12px 20px; border-radius: 12px; background: var(--on-dark); color: var(--ink); text-decoration: none; font-weight: 600; }
+    .gh { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; padding: 14px 22px; border-radius: 2px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; background: var(--on-dark); color: var(--ink); text-decoration: none; font-weight: 600; }
     footer { background: var(--ink); color: var(--on-dark-muted); font-size: 13px; padding: 26px 0 40px; border-top: 1px solid rgba(243,238,230,.08); }
 
     /* ---------- Responsive ---------- */
@@ -187,7 +189,7 @@
     }
     @media (max-width: 640px) {
       .wrap { padding: 0 16px; }
-      .nav-links { display: none; }
+      .nav-links, .brand span { display: none; }
       .hero-sub { font-size: 17px; }
       .cta { width: 100%; justify-content: center; }
       .call { min-height: 400px; padding: 26px 18px 22px; }
@@ -206,7 +208,7 @@
 <header class="hero">
   <div class="wrap">
     <nav>
-      <a class="brand" href="#"><b>Eliza</b><span>Inmuebles comerciales · Toluca &amp; Metepec</span></a>
+      <a class="brand" href="#"><b>Eliza</b><span>Inmuebles comerciales · Área metropolitana de Toluca</span></a>
       <div class="nav-links">
         <a href="#espacios">Espacios</a>
         <a href="#como-funciona">Cómo funciona</a>
@@ -218,7 +220,7 @@
       <div>
         <div class="eyebrow"><span class="pulse"></span>Asesora virtual disponible ahora</div>
         <h1>Tu próximo local <em>empieza</em> con una llamada.</h1>
-        <p class="hero-sub">Locales, oficinas, bodegas y terrenos en Toluca y Metepec. Cuéntale a Eliza qué necesita tu negocio y un asesor te contacta hoy mismo.</p>
+        <p class="hero-sub">Locales, oficinas, bodegas y terrenos en el área metropolitana de Toluca. Cuéntale a Eliza qué necesita tu negocio y un asesor te contacta hoy mismo.</p>
         <button class="cta" data-start type="button">
           <span class="mic" aria-hidden="true">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 17v5"/></svg>
@@ -270,7 +272,7 @@
       <div class="section-head">
         <div class="kicker">Espacios comerciales</div>
         <h2>Aquí te ayudamos a encontrar el lugar para crecer.</h2>
-        <p>Renta o compra en las zonas con más movimiento del Valle de Toluca.</p>
+        <p>Renta o compra en Toluca, Metepec, Lerma, Zinacantepec, San Mateo Atenco y el resto del área metropolitana.</p>
       </div>
       <div class="types">
         <div class="type">
@@ -322,7 +324,7 @@
       <div class="section-head">
         <div class="kicker">About this demo</div>
         <h2>An ElevenLabs voice agent with deterministic business logic.</h2>
-        <p>Inbound commercial real estate leads in Mexico often wait hours for a first response. Eliza answers instantly, qualifies the lead in Spanish, and hands it to the sales team as a structured, scored record in Notion.</p>
+        <p>Inbound commercial real estate leads in the Toluca metropolitan area, Mexico, often wait hours for a first response. Eliza answers instantly, qualifies the lead in Spanish, and hands it to the sales team as a structured, scored record in Notion.</p>
       </div>
       <div class="rev-grid">
         <div class="panel">
